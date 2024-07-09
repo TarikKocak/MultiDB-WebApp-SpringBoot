@@ -2,10 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Employee List</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <style>
+        table.dataTable tbody th, table.dataTable tbody td {
+            padding: 4px 10px; /* Adjust padding for cells */
+            font-size: 14px;   /* Adjust font size */
+        }
+        table.dataTable thead th, table.dataTable thead td {
+            padding: 4px 10px; /* Adjust padding for header cells */
+            font-size: 14px;   /* Adjust font size */
+        }
+        table.dataTable {
+            width: 100%;
+            margin: 0 auto;    /* Center the table */
+        }
+    </style>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 </head>
 <body>
 <h1>Employees from <span th:text="${db}"></span></h1>
-<table border="1">
+<button onclick="window.location.href='/'">Go Back</button>
+
+<table id="employeeTable" class="display">
     <thead>
     <tr>
         <th>ID</th>
@@ -21,5 +40,14 @@
     </tr>
     </tbody>
 </table>
+
+<script>
+    $(document).ready(function() {
+        $('#employeeTable').DataTable({
+            "pagingType": "simple", // Use simple paging controls
+            "pageLength": 10        // Set the default page length
+        });
+    });
+</script>
 </body>
 </html>
