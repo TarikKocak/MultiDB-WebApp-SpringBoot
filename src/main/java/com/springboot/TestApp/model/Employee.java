@@ -12,7 +12,13 @@ public class Employee {
     private String name;
     private String email;
 
+    public Employee() {
+    }
 
+    public Employee(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Select Table</title>
+    <style>
+        button {
+            margin-bottom: 10px; /* Add space between buttons */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
 <h1>Select Table from <span th:text="${db}"></span></h1>
-<p>Database selected: <span th:text="${db}"></span></p>
+
 <button onclick="fetchData('employee')">Employee Table</button>
 <button onclick="fetchData('manager')">Manager Table</button>
+<button onclick="window.location.href='/'">Go Back</button>
 
 <script>
     function fetchData(table) {
         let db = document.querySelector('span').textContent;
-        let url = `/fetchData?db=${db}&table=${table}`;
-        console.log(`Redirecting to: ${url}`);  // Debugging line
+        let url = '/fetchData?db=' + db + '&table=' + table;
+        console.log('Redirecting to:', url);  // Debugging line
         window.location.href = url;
     }
 </script>

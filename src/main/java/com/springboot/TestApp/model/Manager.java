@@ -13,6 +13,15 @@ public class Manager {
     private String name;
     private String email;
 
+    public Manager(){
+
+    }
+
+    public Manager(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     // Getters and Setters
     public Long getId() {
         return id;

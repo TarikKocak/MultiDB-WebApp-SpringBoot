@@ -12,6 +12,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration
 @EnableTransactionManagement
@@ -63,12 +64,12 @@ public class DataSourceConfig {
     @Bean(name = "db1TransactionManager")
     public PlatformTransactionManager db1TransactionManager(
             @Qualifier("db1EntityManagerFactory") LocalContainerEntityManagerFactoryBean db1EntityManagerFactory) {
-        return new JpaTransactionManager(db1EntityManagerFactory.getObject());
+        return new JpaTransactionManager(Objects.requireNonNull(db1EntityManagerFactory.getObject()));
     }
 
     @Bean(name = "db2TransactionManager")
     public PlatformTransactionManager db2TransactionManager(
             @Qualifier("db2EntityManagerFactory") LocalContainerEntityManagerFactoryBean db2EntityManagerFactory) {
-        return new JpaTransactionManager(db2EntityManagerFactory.getObject());
+        return new JpaTransactionManager(Objects.requireNonNull(db2EntityManagerFactory.getObject()));
     }
 }
