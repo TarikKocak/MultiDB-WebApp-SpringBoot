@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dynamic Query Form</title>
+</head>
+<body>
+<h1>Execute Dynamic Query on <span th:text="${db}"></span></h1>
+<form action="/executeQuery" method="post">
+    <input type="hidden" name="db" th:value="${db}" />
+    <label for="query">SQL Query:</label><br>
+    <textarea id="query" name="query" rows="4" cols="50"></textarea><br>
+    <button type="submit">Execute</button>
+</form>
+</body>
+</html>
