@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.springboot.TestApp.db1",
+        basePackages = "com.springboot.TestApp.repository.db1",
         entityManagerFactoryRef = "db1EntityManagerFactory",
         transactionManagerRef = "db1TransactionManager"
 )

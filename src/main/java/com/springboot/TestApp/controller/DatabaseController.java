@@ -138,6 +138,21 @@ public class DatabaseController {
         return "redirect:/fetchData?db=" + db + "&table=manager";
     }
 
+    @GetMapping("/dynamicQueryForm")
+    public String showDynamicQueryForm(@RequestParam String db, Model model) {
+        model.addAttribute("db", db);
+        return "dynamicQueryForm";
+    }
+
+    @PostMapping("/executeQuery")
+    public String executeDynamicQuery(@RequestParam String db, @RequestParam String query, Model model) {
+        List<Object[]> results = databaseService.executeDynamicQuery(db, query);
+        model.addAttribute("results", results);
+        model.addAttribute("db", db);
+        model.addAttribute("query", query);
+        return "queryResult";
+    }
+
 }
 
 

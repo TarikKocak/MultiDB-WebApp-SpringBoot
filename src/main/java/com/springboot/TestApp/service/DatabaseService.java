@@ -1,11 +1,14 @@
 package com.springboot.TestApp.service;
 
-import com.springboot.TestApp.db1.Db1EmployeeRepository;
-import com.springboot.TestApp.db1.Db1ManagerRepository;
-import com.springboot.TestApp.db2.Db2EmployeeRepository;
-import com.springboot.TestApp.db2.Db2ManagerRepository;
+import com.springboot.TestApp.repository.db1.Db1EmployeeRepository;
+import com.springboot.TestApp.repository.db1.Db1ManagerRepository;
+import com.springboot.TestApp.repository.db2.Db2EmployeeRepository;
+import com.springboot.TestApp.repository.db2.Db2ManagerRepository;
 import com.springboot.TestApp.model.Employee;
 import com.springboot.TestApp.model.Manager;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,11 +25,24 @@ public class DatabaseService {
 
     private final Db2ManagerRepository db2ManagerRepository;
 
+    @PersistenceContext(unitName = "db1")
+    private EntityManager db1EntityManager;
+
+    @PersistenceContext(unitName = "db2")
+    private EntityManager db2EntityManager;
+
     public DatabaseService(Db1EmployeeRepository db1EmployeeRepository, Db2EmployeeRepository db2EmployeeRepository, Db1ManagerRepository db1ManagerRepository, Db2ManagerRepository db2ManagerRepository) {
         this.db1EmployeeRepository = db1EmployeeRepository;
         this.db2EmployeeRepository = db2EmployeeRepository;
         this.db1ManagerRepository = db1ManagerRepository;
         this.db2ManagerRepository = db2ManagerRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> executeDynamicQuery(String db, String query) {
+        EntityManager entityManager = "db1".equalsIgnoreCase(db) ? db1EntityManager : db2EntityManager;
+        Query jpaQuery = entityManager.createNativeQuery(query);
+        return jpaQuery.getResultList();
     }
 
     public List<Employee> getEmployeesFromDb1() {
