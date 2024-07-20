@@ -2,6 +2,35 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dynamic Query Form</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <style>
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            margin: 20px 0;
+        }
+        .action-buttons .button {
+            display: inline-block;
+            font-size: 14px;
+            padding: 5px 10px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #278dfb;
+            border: 1px solid #278dfb;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+
+        }
+        .action-buttons .button:hover {
+            background-color: #5b9ce3;
+            border-color: #004080;
+        }
+    </style>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 </head>
 <body>
 <h1>Execute Dynamic Query on <span th:text="${db}"></span></h1>
@@ -9,7 +38,11 @@
     <input type="hidden" name="db" th:value="${db}" />
     <label for="query">SQL Query:</label><br>
     <textarea id="query" name="query" rows="4" cols="50"></textarea><br>
-    <button type="submit">Execute</button>
+    <div class="action-buttons">
+        <button type="submit" class="button">Execute</button>
+        <a th:href="@{/selectTable(db=${db})}" class="button">Back to Select Table</a>
+        <a th:href="@{/}" class="button">Home</a>
+    </div>
 </form>
 </body>
 </html>

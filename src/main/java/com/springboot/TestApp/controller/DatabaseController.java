@@ -4,6 +4,8 @@ import com.springboot.TestApp.model.Employee;
 import com.springboot.TestApp.model.Manager;
 
 import com.springboot.TestApp.service.DatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,9 @@ import java.util.List;
 
 @Controller
 public class DatabaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseController.class);
+
 
     private final DatabaseService databaseService;
 
@@ -146,11 +151,24 @@ public class DatabaseController {
 
     @PostMapping("/executeQuery")
     public String executeDynamicQuery(@RequestParam String db, @RequestParam String query, Model model) {
-        List<Object[]> results = databaseService.executeDynamicQuery(db, query);
-        model.addAttribute("results", results);
-        model.addAttribute("db", db);
-        model.addAttribute("query", query);
-        return "queryResult";
+        try {
+                List<Object[]> results = databaseService.executeDynamicQuery(db, query);
+                model.addAttribute("results", results);
+                model.addAttribute("db", db);
+                model.addAttribute("query", query);
+
+
+                if (results.isEmpty()) {
+                    model.addAttribute("message", "No data found for the typed query.");
+                }
+
+            }catch (Exception e){
+                logger.error("Error executing query: {}",query,e);
+                model.addAttribute("error","Error executing query: " + e.getMessage());
+            }
+
+            return "queryResult";
+
     }
 
 }
