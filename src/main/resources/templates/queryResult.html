@@ -52,12 +52,6 @@
 
 <div th:if="${!#lists.isEmpty(results)}">
     <table id="queryResultTable" class="display">
-        <thead>
-        <!-- Add table headers dynamically -->
-        <tr th:each="cell : ${results[0]}">
-            <th th:text="${cell}"></th>
-        </tr>
-        </thead>
         <tbody>
         <tr th:each="row : ${results}">
             <td th:each="cell : ${row}" th:text="${cell}"></td>
@@ -76,7 +70,7 @@
     $(document).ready(function() {
         $('#queryResultTable').DataTable({
             "pagingType": "simple",
-            "pageLength": 2
+            "pageLength": 10
         });
     });
 </script>
