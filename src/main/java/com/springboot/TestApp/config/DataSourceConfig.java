@@ -18,24 +18,32 @@ import java.util.Objects;
 @EnableTransactionManagement
 public class DataSourceConfig {
 
-    @Bean(name = "db1DataSource")
+    String driverClassName = "org.postgresql.Driver";
+    String db1Url = "jdbc:postgresql://localhost:5432/db1";
+    String db2Url = "jdbc:postgresql://localhost:5432/db2";
+    String username = "postgres";
+    String password = "postgre";
+    String persistenceUnitDb1 = "db1";
+    String persistenceUnitDb2 = "db2";
+
     @Primary
+    @Bean(name = "db1DataSource")
     public DataSource db1DataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/db1");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgre");
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(db1Url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         return dataSource;
     }
 
     @Bean(name = "db2DataSource")
     public DataSource db2DataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/db2");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgre");
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(db2Url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         return dataSource;
     }
 
@@ -46,7 +54,7 @@ public class DataSourceConfig {
         return builder
                 .dataSource(dataSource)
                 .packages("com.springboot.TestApp.model")
-                .persistenceUnit("db1")
+                .persistenceUnit(persistenceUnitDb1)
                 .build();
     }
 
@@ -56,7 +64,7 @@ public class DataSourceConfig {
         return builder
                 .dataSource(dataSource)
                 .packages("com.springboot.TestApp.model")
-                .persistenceUnit("db2")
+                .persistenceUnit(persistenceUnitDb2)
                 .build();
     }
 

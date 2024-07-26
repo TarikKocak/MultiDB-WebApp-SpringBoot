@@ -1,5 +1,6 @@
 package com.springboot.TestApp.service;
 
+import com.springboot.TestApp.enums.Database;
 import com.springboot.TestApp.repository.db1.Db1EmployeeRepository;
 import com.springboot.TestApp.repository.db1.Db1ManagerRepository;
 import com.springboot.TestApp.repository.db2.Db2EmployeeRepository;
@@ -8,7 +9,6 @@ import com.springboot.TestApp.model.Employee;
 import com.springboot.TestApp.model.Manager;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +18,10 @@ import java.util.List;
 public class DatabaseService {
 
     private final Db1EmployeeRepository db1EmployeeRepository;
-
     private final Db2EmployeeRepository db2EmployeeRepository;
-
     private final Db1ManagerRepository db1ManagerRepository;
-
     private final Db2ManagerRepository db2ManagerRepository;
+    private final TransactionService transactionService;
 
     @PersistenceContext(unitName = "db1")
     private EntityManager db1EntityManager;
@@ -31,43 +29,75 @@ public class DatabaseService {
     @PersistenceContext(unitName = "db2")
     private EntityManager db2EntityManager;
 
-    public DatabaseService(Db1EmployeeRepository db1EmployeeRepository, Db2EmployeeRepository db2EmployeeRepository, Db1ManagerRepository db1ManagerRepository, Db2ManagerRepository db2ManagerRepository) {
+    public DatabaseService(Db1EmployeeRepository db1EmployeeRepository, Db2EmployeeRepository db2EmployeeRepository, Db1ManagerRepository db1ManagerRepository, Db2ManagerRepository db2ManagerRepository, TransactionService transactionService) {
         this.db1EmployeeRepository = db1EmployeeRepository;
         this.db2EmployeeRepository = db2EmployeeRepository;
         this.db1ManagerRepository = db1ManagerRepository;
         this.db2ManagerRepository = db2ManagerRepository;
+        this.transactionService = transactionService;
     }
 
-    @Transactional(readOnly = true)
-    public List<Object[]> executeDynamicQuery(String db, String query) {
-        EntityManager entityManager = "db1".equalsIgnoreCase(db) ? db1EntityManager : db2EntityManager;
-        Query jpaQuery = entityManager.createNativeQuery(query);
-        return jpaQuery.getResultList();
+    public List<Object[]> executeQuery(String db, String query) {
+        Database database = Database.fromString(db);
+        EntityManager entityManager = database.getEntityManager(db1EntityManager, db2EntityManager);
+        return transactionService.executeDynamicQuery(entityManager, query);
     }
 
+
+
+    //<---------------------------Getting All Entities--------------------------->
+    @Transactional("db1TransactionManager")
     public List<Employee> getEmployeesFromDb1() {
         List<Employee> employees = db1EmployeeRepository.findAll();
         System.out.println("Employees from DB1: " + employees);  // Debugging line
         return employees;
     }
 
+    @Transactional("db2TransactionManager")
     public List<Employee> getEmployeesFromDb2() {
         List<Employee> employees = db2EmployeeRepository.findAll();
         System.out.println("Employees from DB2: " + employees);  // Debugging line
         return employees;
     }
 
+    @Transactional("db1TransactionManager")
     public List<Manager> getManagersFromDb1() {
         List<Manager> managers = db1ManagerRepository.findAll();
         System.out.println("Managers from DB1: " + managers);  // Debugging line
         return managers;
     }
 
+    @Transactional("db2TransactionManager")
     public List<Manager> getManagersFromDb2() {
         List<Manager> managers = db2ManagerRepository.findAll();
         System.out.println("Managers from DB2: " + managers);  // Debugging line
         return managers;
     }
+
+
+    //<---------------------------Adding Entities--------------------------->
+    @Transactional("db1TransactionManager")
+    public void addEmployeeToDb1(Employee employee) {
+        db1EmployeeRepository.save(employee);
+    }
+
+    @Transactional("db2TransactionManager")
+    public void addEmployeeToDb2(Employee employee) {
+        db2EmployeeRepository.save(employee);
+    }
+
+    @Transactional("db1TransactionManager")
+    public void addManagerToDb1(Manager manager) {
+        db1ManagerRepository.save(manager);
+    }
+
+    @Transactional("db2TransactionManager")
+    public void addManagerToDb2(Manager manager) {
+        db2ManagerRepository.save(manager);
+    }
+
+
+    //<---------------------------Updating Entities--------------------------->
     @Transactional("db1TransactionManager")
     public void updateEmployeeInDb1(Employee employee) {
         db1EmployeeRepository.save(employee);
@@ -79,18 +109,6 @@ public class DatabaseService {
     }
 
     @Transactional("db1TransactionManager")
-    public void deleteEmployeeInDb1(Long id) {
-        db1EmployeeRepository.deleteById(id);
-    }
-
-    @Transactional("db2TransactionManager")
-    public void deleteEmployeeInDb2(Long id) {
-        db2EmployeeRepository.deleteById(id);
-    }
-
-    // Manager operations
-
-    @Transactional("db1TransactionManager")
     public void updateManagerInDb1(Manager manager) {
         db1ManagerRepository.save(manager);
     }
@@ -98,6 +116,18 @@ public class DatabaseService {
     @Transactional("db2TransactionManager")
     public void updateManagerInDb2(Manager manager) {
         db2ManagerRepository.save(manager);
+    }
+
+
+    //<---------------------------Deleting Entities--------------------------->
+    @Transactional("db1TransactionManager")
+    public void deleteEmployeeInDb1(Long id) {
+        db1EmployeeRepository.deleteById(id);
+    }
+
+    @Transactional("db2TransactionManager")
+    public void deleteEmployeeInDb2(Long id) {
+        db2EmployeeRepository.deleteById(id);
     }
 
     @Transactional("db1TransactionManager")
@@ -110,6 +140,8 @@ public class DatabaseService {
         db2ManagerRepository.deleteById(id);
     }
 
+
+    //<---------------------------Getting selected Entity--------------------------->
     public Employee getEmployeeFromDb1ById(Long id) {
         return db1EmployeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
     }
@@ -125,7 +157,5 @@ public class DatabaseService {
     public Manager getManagerFromDb2ById(Long id) {
         return db2ManagerRepository.findById(id).orElseThrow(() -> new RuntimeException("Manager not found"));
     }
-
-
 
 }

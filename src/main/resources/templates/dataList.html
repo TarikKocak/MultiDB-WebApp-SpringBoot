@@ -1,41 +1,49 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Data List</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <style>
-        table.dataTable {
-            width: 50%;
-            margin: 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        table.dataTable td,
-        table.dataTable th {
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
             text-align: left;
-            padding: 4px 10px;
-            font-size: 14px;
         }
-        table.dataTable thead th,
-        table.dataTable thead td {
-            padding: 4px 10px;
-            font-size: 14px;
-        }
-        .action-buttons {
+        .button-container {
+            width: 100%;
+            margin: 20px auto;
             display: flex;
-            gap: 5px;
+            justify-content: space-between;
         }
-        .action-buttons button {
-            font-size: 12px;
-            padding: 2px 5px;
+        .button-container button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: none;
+        }
+        .add-button {
+            background-color: #2c6f2f;
+            color: white;
+        }
+        .back-button {
+            background-color: #f1f1f1;
+            color: #333;
         }
     </style>
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 </head>
 <body>
-<h1>Data from <span th:text="${db}"></span> - <span th:text="${table}"></span> Table</h1>
-<button id="goBackButton" th:data-db="${db}">Go Back</button>
-
-<table id="dataTable" class="display">
+<div class="button-container" th:data-db="${db}">
+    <button type="button" class="add-button" onclick="redirectToAddForm()">Add New <span th:text="${table}"></span></button>
+    <button type="button" class="back-button" onclick="goBack()">Go Back</button>
+</div>
+<h2>Data List: <span th:text="${table}"></span></h2>
+<table>
     <thead>
     <tr>
         <th>ID</th>
@@ -45,51 +53,52 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${table == 'employee'}" th:each="employee : ${employees}">
-        <td th:text="${employee.id}"></td>
-        <td th:text="${employee.name}"></td>
-        <td th:text="${employee.email}"></td>
+    <tr th:each="item : ${employees}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.email}"></td>
         <td>
-            <div class="action-buttons">
-                <a th:href="@{/updateEmployeeForm(id=${employee.id}, db=${db})}">Update</a>
-                <form method="POST" th:action="@{/deleteEmployee}" style="display: inline;">
-                    <input type="hidden" name="id" th:value="${employee.id}" />
-                    <input type="hidden" name="db" th:value="${db}" />
-                    <button type="submit">Delete</button>
-                </form>
-            </div>
+            <a th:href="@{/updateEmployeeForm(id=${item.id}, db=${db})}">Update</a>
+            <form th:action="@{/deleteEmployee}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${item.id}" />
+                <input type="hidden" name="db" th:value="${db}" />
+                <button type="submit">Delete</button>
+            </form>
         </td>
     </tr>
-    <tr th:if="${table == 'manager'}" th:each="manager : ${managers}">
-        <td th:text="${manager.id}"></td>
-        <td th:text="${manager.name}"></td>
-        <td th:text="${manager.email}"></td>
+    <tr th:each="item : ${managers}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.email}"></td>
         <td>
-            <div class="action-buttons">
-                <a th:href="@{/updateManagerForm(id=${manager.id}, db=${db})}">Update</a>
-                <form method="POST" th:action="@{/deleteManager}" style="display: inline;">
-                    <input type="hidden" name="id" th:value="${manager.id}" />
-                    <input type="hidden" name="db" th:value="${db}" />
-                    <button type="submit">Delete</button>
-                </form>
-            </div>
+            <a th:href="@{/updateManagerForm(id=${item.id}, db=${db})}">Update</a>
+            <form th:action="@{/deleteManager}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${item.id}" />
+                <input type="hidden" name="db" th:value="${db}" />
+                <button type="submit">Delete</button>
+            </form>
         </td>
     </tr>
     </tbody>
 </table>
 
 <script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable({
-            "pagingType": "simple",
-            "pageLength": 30
-        });
+    function redirectToAddForm() {
+        const db = document.querySelector('.button-container').getAttribute('data-db');
+        const table = document.querySelector('h2 span').textContent;
+        let url;
+        if (table === 'employee') {
+            url = `/addEmployeeForm?db=${encodeURIComponent(db)}`;
+        } else if (table === 'manager') {
+            url = `/addManagerForm?db=${encodeURIComponent(db)}`;
+        }
+        window.location.href = url;
+    }
 
-        $('#goBackButton').on('click', function() {
-            const db = $(this).data('db');
-            window.location.href = '/selectTable?db=' + db;
-        });
-    });
+    function goBack() {
+        const db = document.querySelector('.button-container').getAttribute('data-db');
+        window.location.href = `/selectTable?db=${encodeURIComponent(db)}`;
+    }
 </script>
 </body>
 </html>

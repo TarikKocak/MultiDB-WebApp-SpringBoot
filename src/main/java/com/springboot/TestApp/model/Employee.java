@@ -15,9 +15,9 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String email, String name) {
-        this.email = email;
+    public Employee(String name, String email) {
         this.name = name;
+        this.email = email;
     }
 
     public Long getId() {
