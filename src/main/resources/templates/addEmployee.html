@@ -14,7 +14,7 @@
             display: block;
             margin-bottom: 10px;
         }
-        .form-container input {
+        .form-container input, .form-container select {
             width: 95%;
             padding: 8px;
             margin-bottom: 10px;
@@ -48,6 +48,11 @@
         <input type="text" id="name" name="name" required />
         <label for="email">Email:</label>
         <input type="text" id="email" name="email" required />
+        <label for="manager">Manager:</label>
+        <select id="manager" name="managerId">
+            <option value="">Select Manager</option>
+            <option th:each="manager : ${managers}" th:value="${manager.id}" th:text="${manager.name}"></option>
+        </select>
         <div style="display: flex; justify-content: space-between;">
             <button type="submit" class="add-button">Add</button>
             <button type="button" class="cancel-button" onclick="cancelAdd()">Cancel</button>

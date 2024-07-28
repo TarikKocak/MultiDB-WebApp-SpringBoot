@@ -99,12 +99,16 @@ public class DatabaseService {
 
     //<---------------------------Updating Entities--------------------------->
     @Transactional("db1TransactionManager")
-    public void updateEmployeeInDb1(Employee employee) {
+    public void updateEmployeeInDb1(Employee employee, Long managerId) {
+        Manager manager = db1ManagerRepository.findById(managerId).orElseThrow(() -> new RuntimeException("Manager not found"));
+        employee.setManager(manager);
         db1EmployeeRepository.save(employee);
     }
 
     @Transactional("db2TransactionManager")
-    public void updateEmployeeInDb2(Employee employee) {
+    public void updateEmployeeInDb2(Employee employee, Long managerId) {
+        Manager manager = db2ManagerRepository.findById(managerId).orElseThrow(() -> new RuntimeException("Manager not found"));
+        employee.setManager(manager);
         db2EmployeeRepository.save(employee);
     }
 
@@ -156,6 +160,15 @@ public class DatabaseService {
 
     public Manager getManagerFromDb2ById(Long id) {
         return db2ManagerRepository.findById(id).orElseThrow(() -> new RuntimeException("Manager not found"));
+    }
+
+    //<---------------------------HasManageranyEmployee?--------------------------->
+    public boolean hasEmployees(Long managerId, String db) {
+        if ("db1".equalsIgnoreCase(db)) {
+            return db1EmployeeRepository.existsByManagerId(managerId);
+        } else {
+            return db2EmployeeRepository.existsByManagerId(managerId);
+        }
     }
 
 }

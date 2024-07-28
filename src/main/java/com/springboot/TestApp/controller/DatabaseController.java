@@ -82,17 +82,37 @@ public class DatabaseController {
     public String showAddEmployeeForm(@RequestParam String db, Model model) {
         model.addAttribute("db", db);
         model.addAttribute("employee", new Employee());
+
+        List<Manager> managers;
+        if ("db1".equalsIgnoreCase(db)) {
+            managers = databaseService.getManagersFromDb1();
+        } else {
+            managers = databaseService.getManagersFromDb2();
+        }
+        model.addAttribute("managers", managers);
+
         return "addEmployee";
     }
     @PostMapping("/addEmployee")
     public String addEmployee(@RequestParam String db,
-                              @RequestParam String name,@RequestParam String email){
-        Employee employee = new Employee(name,email);
-        if("db1".equalsIgnoreCase(db)){
+                              @RequestParam String name,
+                              @RequestParam String email,
+                              @RequestParam Long managerId) {
+        Employee employee = new Employee();
+        employee.setName(name);
+        employee.setEmail(email);
+
+        Manager manager;
+        if ("db1".equalsIgnoreCase(db)) {
+            manager = databaseService.getManagerFromDb1ById(managerId);
+            employee.setManager(manager);
             databaseService.addEmployeeToDb1(employee);
-        }else {
+        } else {
+            manager = databaseService.getManagerFromDb2ById(managerId);
+            employee.setManager(manager);
             databaseService.addEmployeeToDb2(employee);
         }
+
         String redirectUrl = UriComponentsBuilder.fromPath("/fetchData")
                 .queryParam("db", db)
                 .queryParam("table", "employee")
@@ -144,42 +164,61 @@ public class DatabaseController {
 
 
     @PostMapping("/deleteManager")
-    public String deleteManager(@RequestParam Long id, @RequestParam String db) {
+    public String deleteManager(@RequestParam Long id, @RequestParam String db, Model model) {
+        if (databaseService.hasEmployees(id, db)) {
+            model.addAttribute("error", "This manager has associated employees and cannot be deleted.");
+
+            List<Manager> managers;
+            if ("db1".equalsIgnoreCase(db)) {
+                managers = databaseService.getManagersFromDb1();
+            } else {
+                managers = databaseService.getManagersFromDb2();
+            }
+            model.addAttribute("managers", managers);
+            model.addAttribute("db", db);
+            model.addAttribute("table", "manager");
+            return "dataList";
+        }
+
         if ("db1".equalsIgnoreCase(db)) {
             databaseService.deleteManagerInDb1(id);
         } else {
             databaseService.deleteManagerInDb2(id);
         }
+
         String redirectUrl = UriComponentsBuilder.fromPath("/fetchData")
                 .queryParam("db", db)
                 .queryParam("table", "manager")
                 .build()
                 .toUriString();
-
         return "redirect:" + redirectUrl;
     }
 
     @GetMapping("/updateEmployeeForm")
     public String showUpdateEmployeeForm(@RequestParam Long id, @RequestParam String db, Model model) {
         Employee employee;
+        List<Manager> managers;
         if ("db1".equalsIgnoreCase(db)) {
             employee = databaseService.getEmployeeFromDb1ById(id);
+            managers = databaseService.getManagersFromDb1();
         } else {
             employee = databaseService.getEmployeeFromDb2ById(id);
+            managers = databaseService.getManagersFromDb2();
         }
         model.addAttribute("employee", employee);
+        model.addAttribute("managers", managers);
         model.addAttribute("db", db);
         return "updateEmployee";
     }
     @PostMapping("/updateEmployee")
     public String updateEmployee(@RequestParam Long id, @RequestParam String db,
-                                 @RequestParam String name, @RequestParam String email) {
-        Employee employee = new Employee(name,email);
+                                 @RequestParam String name, @RequestParam String email, @RequestParam Long manager_id) {
+        Employee employee = new Employee(name, email);
         employee.setId(id);
         if ("db1".equalsIgnoreCase(db)) {
-            databaseService.updateEmployeeInDb1(employee);
+            databaseService.updateEmployeeInDb1(employee, manager_id);
         } else {
-            databaseService.updateEmployeeInDb2(employee);
+            databaseService.updateEmployeeInDb2(employee, manager_id);
         }
         String redirectUrl = UriComponentsBuilder.fromPath("/fetchData")
                 .queryParam("db", db)

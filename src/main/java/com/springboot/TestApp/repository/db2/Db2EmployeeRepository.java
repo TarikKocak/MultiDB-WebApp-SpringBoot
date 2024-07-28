@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface Db2EmployeeRepository extends JpaRepository<Employee,Long> {
+    boolean existsByManagerId(Long managerId);
 }

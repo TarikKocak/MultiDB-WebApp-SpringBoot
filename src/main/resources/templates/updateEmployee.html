@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Update Employee</title>
     <style>
@@ -14,7 +14,7 @@
             display: block;
             margin-bottom: 10px;
         }
-        .form-container input {
+        .form-container input, .form-container select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -49,6 +49,10 @@
         <input type="text" id="name" name="name" th:value="${employee.name}" required />
         <label for="email">Email:</label>
         <input type="text" id="email" name="email" th:value="${employee.email}" required />
+        <label for="manager_id">Manager ID:</label>
+        <select id="manager_id" name="manager_id">
+            <option th:each="manager : ${managers}" th:value="${manager.id}" th:text="${manager.name}" th:selected="${manager.id} == ${employee.manager.id}"></option>
+        </select>
         <div style="display: flex; justify-content: space-between;">
             <button type="submit" class="update-button">Update</button>
             <button type="button" class="cancel-button" onclick="cancelUpdate('employee')">Cancel</button>

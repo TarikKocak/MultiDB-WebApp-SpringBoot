@@ -3,6 +3,8 @@ package com.springboot.TestApp.model;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "manager")
 public class Manager {
@@ -12,6 +14,9 @@ public class Manager {
 
     private String name;
     private String email;
+
+    @OneToMany(mappedBy = "manager")
+    private Set<Employee> employees;
 
     public Manager(){
 
@@ -45,6 +50,14 @@ public class Manager {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
     }
 }
 

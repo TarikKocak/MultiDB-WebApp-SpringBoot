@@ -2,6 +2,8 @@ package com.springboot.TestApp.model;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "employee")
 public class Employee {
@@ -11,6 +13,10 @@ public class Employee {
 
     private String name;
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private Manager manager;
 
     public Employee() {
     }
@@ -44,5 +50,12 @@ public class Employee {
         this.email = email;
     }
 
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
 }
 
