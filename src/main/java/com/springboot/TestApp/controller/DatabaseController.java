@@ -77,7 +77,9 @@ public class DatabaseController {
         model.addAttribute("db", db);
         return "dataList";
     }
-    //Handling Insertion operation for each entity on database
+
+
+    //<-------------------Controlling Adding------------------->
     @GetMapping("/addEmployeeForm")
     public String showAddEmployeeForm(@RequestParam String db, Model model) {
         model.addAttribute("db", db);
@@ -145,7 +147,7 @@ public class DatabaseController {
         return "redirect:" + redirectUrl;
     }
 
-
+    //<-------------------Controlling deleting------------------->
     @PostMapping("/deleteEmployee")
     public String deleteEmployee(@RequestParam Long id, @RequestParam String db) {
         if ("db1".equalsIgnoreCase(db)) {
@@ -194,6 +196,8 @@ public class DatabaseController {
         return "redirect:" + redirectUrl;
     }
 
+
+    //<-------------------Controlling Updating------------------->
     @GetMapping("/updateEmployeeForm")
     public String showUpdateEmployeeForm(@RequestParam Long id, @RequestParam String db, Model model) {
         Employee employee;
@@ -260,6 +264,8 @@ public class DatabaseController {
         return "redirect:" + redirectUrl;
     }
 
+
+    //<-------------------Controlling DynamicQuery------------------->
     @GetMapping("/dynamicQueryForm")
     public String showDynamicQueryForm(@RequestParam String db, Model model) {
         model.addAttribute("db", db);
