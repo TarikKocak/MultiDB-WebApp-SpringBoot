@@ -1,18 +1,19 @@
 # Spring Boot Web CRUD Application with Multiple Databases
 
-This is a web-based application built with Spring Boot that demonstrates CRUD (Create, Read, Update, Delete) operations using JPA Repository. The application can connect to two different datasese at runtime and work with two them. 
-NOTE: Both databases have the same entities (employee and manager).
+This web application, built with Spring Boot, demonstrates CRUD (Create, Read, Update, Delete) operations using the JPA Repository. The application can connect to two different databases at runtime, allowing it to work with both simultaneously. 
+
+**Note:** Both databases utilize the same entities (employee and manager).
 
 ## Features
 
--Web-based interface for managing records<br />
--Supports switching between two databases<br />
--Add, view, edit, and delete data directly from the browser<br />
--Connects to relational databases using JPA<br />
+- Web-based interface for managing records  
+- Support for switching between two databases  
+- Add, view, edit, and delete data directly from your browser  
+- Connects to relational databases using JPA  
 
 ## Requirements
 
--Java 17 or later <br />
--Maven or Gradle <br />
--Two relational databases (e.g., H2, MySQL, PostgreSQL) <br />
--A web browser for accessing the application <br />
+- Java 17 or later  
+- Maven or Gradle  
+- Two relational databases (e.g., H2, MySQL, PostgreSQL)  
+- A web browser to access the application  
